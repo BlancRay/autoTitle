@@ -1,6 +1,8 @@
 # autoTitle
 
-We try use OpenNMT,Sockeye,Tensorflow tools with encoder-decoder architecture reffence to Bahdanau(2014).
+We try use OpenNMT,Sockeye,Tensorflow tools with encoder-decoder architecture to build a good text summarization tool.
+
+This work is mainly reffence to Bahdanau(2014) as below.
 
 ----
 Reffence
