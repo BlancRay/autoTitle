@@ -1,5 +1,4 @@
 #encoding=utf-8
-import jieba
 import re
 
 #dir
@@ -24,7 +23,7 @@ with open(titdir,"r",encoding="UTF-8") as freadtitle , open(contdir,"r",encoding
         titleline = titleline.strip('\n')
         titleline = re.sub(NON_CHINESE_PATTERN,"",titleline)
         fwrite.write("abstract=<d> <p> <s> ")
-        for titleword in jieba.cut(titleline):
+        for titleword in titleline:
             fwrite.write(titleword + " ")
             if titleword in titvocab_dic:
                 titvocab_dic[titleword] += 1
@@ -44,7 +43,7 @@ with open(titdir,"r",encoding="UTF-8") as freadtitle , open(contdir,"r",encoding
                 continue
             fwrite.write("<s> ")
             s = re.sub(NON_CHINESE_PATTERN,"",s)
-            for contentword in jieba.cut(s):
+            for contentword in s:
                 fwrite.write(contentword + " ")
                 if contentword in contvocab_dic:
                     contvocab_dic[contentword] += 1
