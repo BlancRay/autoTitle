@@ -1,6 +1,6 @@
 #encoding=utf-8
 import jieba
-fread,fwrite = open("C:/Users/xulei/zhiziyun/workspace/Data/net_title","r",encoding="UTF-8"),open("C:/Users/xulei/zhiziyun/workspace/Data/net_title_token.txt","w",encoding="UTF-8")
+fread,fwrite = open("C:/Users/xulei/zhiziyun/autoTitle/Data/net_title","r",encoding="UTF-8"),open("C:/Users/xulei/zhiziyun/autoTitle/Data/net_title_token.txt","w",encoding="UTF-8")
 lines = fread.readlines()
 for line in lines:
     seg_list = list(jieba.cut(line,cut_all=False))
