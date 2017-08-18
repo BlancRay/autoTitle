@@ -1,0 +1,143 @@
+#data
+data =/home/ubuntu/text_summarization/opennmt/data/demo/processed_data-train.t7
+
+#model
+model_type = seq2seq
+save_model = /home/ubuntu/text_summarization/opennmt/model/demo
+
+#encoder
+encoder_type = brnn #default(LSTM/GRU),brnn,pdbrnn,dbrnn,gnmt,cnn
+
+brnn_merge = sum
+
+pdbrnn = false
+pdbrnn_reduction = 2
+pdbrnn_merge = concat
+
+dbrnn = false
+
+cnn_size = 500
+cnn_kernel = 3
+cnn_layers = 2
+
+#decoder
+bridge = copy   #copy (default),dense,dense_nonlinear,none   #A bridge is an additional layer between the encoder and the decoder that defines how to pass the encoder states to the decoder.
+input_feed = true   #Input feeding is an approach to feed attentional vectors "as inputs to the next time steps to inform the model about past alignment decisions"
+
+#attention model
+global_attention = concat   #dot,general,concat
+attention = global
+
+#embedding
+#Pretrained
+pre_word_vecs_enc = 
+pre_word_vecs_dec = 
+
+#fixed  By default these embeddings will be updated during training
+fix_word_vecs_enc = false
+fix_word_vecs_dec = false
+
+#log
+log_file = 
+disable_logs = false
+log_level = INFO
+report_every = 50   #checkpoint
+save_every_epochs = 1
+
+validation_metric = perplexity
+
+#Multi GPU
+gpuid = 1
+max_batch_size = 64
+async_parallel = false
+async_parallel_minbatch = 1000
+
+#retrain
+train_from = 
+continue = false
+
+#Regularization To prevent neural networks from overfitting and increase generalization capacity
+#Dropout
+dropout = 0.0   #default=0.2
+dropout_input = false   #applied on the first layer
+dropout_type = naive    #naive(default),variational
+dropout_words = 0
+
+#Decay strategies
+optim = sgd
+learning_rate = 1
+min_learning_rate = 0
+learning_rate_decay = 0.7
+#By default, the decay is applied when one of the following conditions is met
+decay = score_only  #epoch_only,score_only
+start_decay_at = 9
+start_decay_score_delta = 10
+
+#data sample
+sample_type = uniform   #Uniform,Perplexity-based,partition
+sample_vocab = false
+#Uniform
+sample = 0
+#Perplexity-based
+sample_perplexity_init = 15
+
+#cuda
+fallback_to_cpu = false
+fp16 = false
+no_nccl = false
+
+#crayon
+exp_host = 127.0.0.1
+exp_port = 8889
+exp = 
+
+#translate
+model = 
+beam_size = 5
+dump_input_encoding = false
+max_sent_length = 250
+replace_unk = false
+phrase_table = 
+n_best = 1
+max_num_unks = 1
+target_subdict = 
+
+
+max_pos = 50
+curriculum = 0
+uneven_batches = false
+layers = 1
+h = false
+feat_merge = concat
+seed = 3435
+rnn_type = GRU
+end_epoch =5
+feat_vec_size = 20
+save_config = 
+disable_mem_optimization = false
+save_every = 5000
+profiler = false
+tgt_word_vec_size = 300
+rnn_size = 512
+pre_filter_factor = 1
+eos_norm = 0
+feat_vec_exponent = 0.7
+use_pos_emb = false
+brnn = false
+word_vec_size = 300
+coverage_norm = 0
+enc_layers = 1
+md = false
+start_epoch = 1
+length_norm = 0
+sample_perplexity_max = -1.5
+start_iteration = 1
+config = 
+residual = false    #With residual connections the input of a layer is element-wise added to the output before feeding to the next layer. This approach proved to be useful for the gradient flow with deep RNN stacks (more than 4 layers).
+sample_tgt_vocab = false
+src_word_vec_size = 300
+save_beam_to = 
+dec_layers = 1
+max_grad_norm = 5
+save_validation_translation_every = 0
+param_init = 0.1

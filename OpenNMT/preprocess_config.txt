@@ -1,0 +1,30 @@
+check_plength = false
+data_type = bitext  #bitext,monotext
+idx_files = false
+keep_frequency = false
+src_vocab_size = 3000   #default=50000
+tgt_vocab_size =    #default=50000
+src_words_min_frequency = 0
+tgt_words_min_frequency = 0
+tgt_vocab = /home/ubuntu/text_summarization/data/demo/processed_data.src.dict
+valid_tgt = /home/ubuntu/text_summarization/data/demo/headline_word_val_small.txt
+valid_src = /home/ubuntu/text_summarization/data/demo/content_word_val_small.txt
+train_src = /home/ubuntu/text_summarization/data/demo/content_word_train_small.txt
+train_tgt = /home/ubuntu/text_summarization/data/demo/headline_word_train_small.txt
+src_seq_length =200
+tgt_seq_length =50
+disable_logs = false
+log_level = INFO
+log_file = 
+config = 
+save_config = 
+report_every = 100000
+time_shift_feature = true
+h = false
+seed = 3425
+features_vocabs_prefix = 
+md = false
+sort = true
+shuffle = true
+src_vocab = 
+save_data = /home/ubuntu/text_summarization/opennmt/data/demo/processed_data
