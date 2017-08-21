@@ -1,0 +1,11 @@
+bazel-bin/textsum/seq2seq_attention \
+--mode=decode \
+--article_key=article \
+--abstract_key=abstract \
+--data_path=data/cctv/tokens_bin \
+--vocab_path=data/ckxx/vocab_dic \
+--log_root=log \
+--decode_dir=log/decode \
+--beam_size=8 \
+--max_decode_steps=10 \
+--decode_batches_per_ckpt=100
