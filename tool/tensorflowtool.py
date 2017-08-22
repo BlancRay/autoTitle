@@ -4,12 +4,12 @@ import re
 
 #dir
 datadir = "C:/Users/xulei/zhiziyun/autotitle/Data/"
-titdir = datadir+"testtitle.txt"
-contdir = datadir+"testcontent.txt"
-tokendir = datadir+"test.txt"
-titvocab_dic_dir = datadir+"testtitle_dic"
-contvocab_dic_dir = datadir+"testcontent_dic"
-vocab_dic_dir = datadir + "vocab_dic"
+titdir = datadir+"newtest_title"
+contdir = datadir+"newtest_content"
+tokendir = datadir+"newtest.txt"
+titvocab_dic_dir = datadir+"newtesttitle_dic"
+contvocab_dic_dir = datadir+"newtestcontent_dic"
+vocab_dic_dir = datadir + "newvocab_dic"
 
 #vocab
 titvocab_dic = {'<UNK>':1,'<s>':1,'</s>':1,'<PAD>':1}
