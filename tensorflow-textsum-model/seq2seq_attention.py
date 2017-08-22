@@ -63,6 +63,7 @@ tf.app.flags.DEFINE_bool('truncate_input', False,
                          'examples that are too long are discarded.')
 tf.app.flags.DEFINE_integer('num_gpus', 0, 'Number of gpus used.')
 tf.app.flags.DEFINE_integer('random_seed', 111, 'A seed value for randomness.')
+tf.app.flags.DEFINE_integer('batch_size', 4, 'batch size for training.')
 
 
 def _RunningAvgLoss(loss, running_avg_loss, summary_writer, step, decay=0.999):
@@ -173,11 +174,11 @@ def main(unused_argv):
       mode=FLAGS.mode,  # train, eval, decode
       min_lr=0.01,  # min learning rate.
       lr=0.15,  # learning rate
-      batch_size=batch_size,
+      batch_size=FLAGS.batch_size,
       enc_layers=4,
       enc_timesteps=120,
       dec_timesteps=30,
-      min_input_len=2,  # discard articles/summaries < than this
+      min_input_len=1,  # discard articles/summaries < than this
       num_hidden=256,  # for rnn cell
       emb_dim=128,  # If 0, don't use embedding
       max_grad_norm=2,
