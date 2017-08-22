@@ -38,6 +38,7 @@ with open(titdir,"r",encoding="UTF-8") as freadtitle , open(contdir,"r",encoding
         #deal content file
         contentline = contentline.strip('\n')
         sents = contentline.split("。")
+        nb_sents = 0
         for s in sents:
             if s=='':
                 continue
@@ -54,6 +55,9 @@ with open(titdir,"r",encoding="UTF-8") as freadtitle , open(contdir,"r",encoding
                 else:
                     vocab_dic[contentword] = 1
             fwrite.write("</s> ")
+            nb_sents+=1
+            if nb_sents == 5:
+                break
         fwrite.write("</p> </d>	publisher=AFP \n")
         fwrite.flush
 freadtitle.close
