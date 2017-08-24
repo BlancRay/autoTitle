@@ -112,6 +112,9 @@ def _Train(model, data_batcher):
       step += 1
       if step % 100 == 0:
         summary_writer.flush()
+      if model._lr_rate<=model._hps.min_lr:
+        summary_writer.flush()
+        break
     sv.Stop()
     return running_avg_loss
 
