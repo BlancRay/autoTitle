@@ -52,7 +52,7 @@ tf.app.flags.DEFINE_integer('max_article_sentences', 2,
 tf.app.flags.DEFINE_integer('max_abstract_sentences', 100,
                             'Max number of first sentences to use from the '
                             'abstract')
-tf.app.flags.DEFINE_integer('beam_size', 4,
+tf.app.flags.DEFINE_integer('beam_size', 8,
                             'beam size for beam search decoding.')
 tf.app.flags.DEFINE_integer('eval_interval_secs', 60, 'How often to run eval.')
 tf.app.flags.DEFINE_integer('checkpoint_secs', 60, 'How often to checkpoint.')
@@ -64,7 +64,9 @@ tf.app.flags.DEFINE_bool('truncate_input', False,
 tf.app.flags.DEFINE_integer('num_gpus', 0, 'Number of gpus used.')
 tf.app.flags.DEFINE_integer('random_seed', 111, 'A seed value for randomness.')
 tf.app.flags.DEFINE_integer('batch_size', 4, 'batch size for training.')
-
+tf.app.flags.DEFINE_float('loss_stop', 0.001, 'Stop iterate when running_avg_loss < than loss_stop.')
+tf.app.flags.DEFINE_integer('num_epoch', None, 'number of epoch for reading data.')
+tf.app.flags.DEFINE_integer('num_softmax_samples', 0, 'number of max softmax samples; If 0, no sampled softmax.')
 
 def _RunningAvgLoss(loss, running_avg_loss, summary_writer, step, decay=0.999):
   """Calculate the running average of losses."""
@@ -82,7 +84,7 @@ def _RunningAvgLoss(loss, running_avg_loss, summary_writer, step, decay=0.999):
 
 def _Train(model, data_batcher):
   """Runs model training."""
-  with tf.device('/cpu:0'):
+  with tf.device('/gpu:0'):
     model.build_graph()
     saver = tf.train.Saver()
     # Train dir is different from log_root to avoid summary directory
@@ -99,7 +101,9 @@ def _Train(model, data_batcher):
         allow_soft_placement=True))
     running_avg_loss = 0
     step = 0
+    tmp_loss = 0
     while not sv.should_stop() and step < FLAGS.max_run_steps:
+      print('Step is: ' + str(step))
       (article_batch, abstract_batch, targets, article_lens, abstract_lens,
        loss_weights, _, _) = data_batcher.NextBatch()
       (_, summaries, loss, train_step) = model.run_train_step(
@@ -107,14 +111,18 @@ def _Train(model, data_batcher):
           abstract_lens, loss_weights)
 
       summary_writer.add_summary(summaries, train_step)
+    #different between _RunningAvgLoss def for arguments running_avg_loss and loss
       running_avg_loss = _RunningAvgLoss(
           running_avg_loss, loss, summary_writer, train_step)
       step += 1
       if step % 100 == 0:
         summary_writer.flush()
-      if model._lr_rate<=model._hps.min_lr:
-        summary_writer.flush()
-        break
+      loss_update = abs(running_avg_loss - tmp_loss)
+      tmp_loss = running_avg_loss
+      print("abs of loss change: " + str(loss_update))
+      if loss_update<FLAGS.loss_stop:
+        saver.save(sess,FLAGS.log_root)
+        sv.request_stop()
     sv.Stop()
     return running_avg_loss
 
@@ -169,28 +177,27 @@ def main(unused_argv):
   assert vocab.CheckVocab(data.SENTENCE_START) > 0
   assert vocab.CheckVocab(data.SENTENCE_END) > 0
 
-  batch_size = 4
+  batch_size = FLAGS.batch_size
   if FLAGS.mode == 'decode':
     batch_size = FLAGS.beam_size
-
   hps = seq2seq_attention_model.HParams(
       mode=FLAGS.mode,  # train, eval, decode
-      min_lr=0.01,  # min learning rate.
-      lr=0.15,  # learning rate
-      batch_size=FLAGS.batch_size,
+      min_lr=0.001,  # min learning rate.
+      lr=0.01,  # learning rate
+      batch_size=batch_size,
       enc_layers=4,
       enc_timesteps=120,
-      dec_timesteps=30,
-      min_input_len=1,  # discard articles/summaries < than this
+      dec_timesteps=25,
+      min_input_len=5,  # discard articles/summaries < than this
       num_hidden=256,  # for rnn cell
-      emb_dim=128,  # If 0, don't use embedding
-      max_grad_norm=2,
-      num_softmax_samples=4096)  # If 0, no sampled softmax.
+      emb_dim=200,  # If 0, don't use embedding
+      max_grad_norm=2,  #prevent exploding gradient
+      num_softmax_samples=FLAGS.num_softmax_samples)  # If 0, no sampled softmax.
 
   batcher = batch_reader.Batcher(
       FLAGS.data_path, vocab, hps, FLAGS.article_key,
       FLAGS.abstract_key, FLAGS.max_article_sentences,
-      FLAGS.max_abstract_sentences, bucketing=FLAGS.use_bucketing,
+      FLAGS.max_abstract_sentences, FLAGS.num_epoch, bucketing=FLAGS.use_bucketing,
       truncate_input=FLAGS.truncate_input)
   tf.set_random_seed(FLAGS.random_seed)
 

@@ -41,7 +41,7 @@ class Batcher(object):
 
   def __init__(self, data_path, vocab, hps,
                article_key, abstract_key, max_article_sentences,
-               max_abstract_sentences, bucketing=True, truncate_input=False):
+               max_abstract_sentences, num_epoch=None, bucketing=True, truncate_input=False):
     """Batcher constructor.
 
     Args:
@@ -65,6 +65,7 @@ class Batcher(object):
     self._max_abstract_sentences = max_abstract_sentences
     self._bucketing = bucketing
     self._truncate_input = truncate_input
+    self._num_epoch = num_epoch
     self._input_queue = Queue.Queue(QUEUE_NUM_BATCH * self._hps.batch_size)
     self._bucket_input_queue = Queue.Queue(QUEUE_NUM_BATCH)
     self._input_threads = []
@@ -132,7 +133,7 @@ class Batcher(object):
     start_id = self._vocab.WordToId(data.SENTENCE_START)
     end_id = self._vocab.WordToId(data.SENTENCE_END)
     pad_id = self._vocab.WordToId(data.PAD_TOKEN)
-    input_gen = self._TextGenerator(data.ExampleGen(self._data_path))
+    input_gen = self._TextGenerator(data.ExampleGen(self._data_path, self._num_epoch))
     while True:
       (article, abstract) = six.next(input_gen)
       article_sentences = [sent.strip() for sent in

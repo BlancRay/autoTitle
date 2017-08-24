@@ -30,7 +30,7 @@ tf.app.flags.DEFINE_integer('decode_batches_per_ckpt', 8000,
                             'Number of batches to decode before restoring next '
                             'checkpoint')
 
-DECODE_LOOP_DELAY_SECS = 60
+DECODE_LOOP_DELAY_SECS = 200
 DECODE_IO_FLUSH_INTERVAL = 100
 
 
