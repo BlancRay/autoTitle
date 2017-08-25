@@ -146,7 +146,7 @@ class Seq2SeqAttentionModel(object):
       article_lens = self._article_lens
 
       # Embedding shared by the input and outputs.
-      with tf.variable_scope('embedding'), tf.device('/gpu:0'):
+      with tf.variable_scope('embedding'), tf.device('/cpu:0'):
         embedding = tf.get_variable(
             'embedding', [vsize, hps.emb_dim], dtype=tf.float32,
             initializer=tf.truncated_normal_initializer(stddev=1e-4))
@@ -229,7 +229,7 @@ class Seq2SeqAttentionModel(object):
             labels = tf.reshape(labels, [-1, 1])
             return tf.nn.sampled_softmax_loss(
                 weights=w_t, biases=v, labels=labels, inputs=inputs,
-                num_sampled=hps.num_softmax_samples, num_classes=vsize)
+                num_sampled=hps.num_softmax_samples, num_classes=vsize, partition_strategy="div")
 
         if hps.num_softmax_samples != 0 and hps.mode == 'train':
           self._loss = seq2seq_lib.sampled_sequence_loss(
