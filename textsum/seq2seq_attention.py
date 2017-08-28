@@ -181,6 +181,7 @@ def main(unused_argv):
   if FLAGS.mode == 'decode':
     batch_size = FLAGS.beam_size
   hps = seq2seq_attention_model.HParams(
+      vocab_path=FLAGS.vocab_path,
       mode=FLAGS.mode,  # train, eval, decode
       min_lr=0.001,  # min learning rate.
       lr=0.01,  # learning rate
