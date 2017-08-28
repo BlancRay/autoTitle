@@ -61,13 +61,13 @@ def build_dataset(self,words, n_words):
   return data, count, dictionary, reversed_dictionary
 
 
-def collect_data(self,vsize=10000):
+def collect_data(self,filename,vsize=10000):
   url = 'http://mattmahoney.net/dc/'
   # filename = maybe_download('text8.zip', url, 31344016)
   # vocabulary = read_data(filename)
   # print(type(vocabulary))
   print("Reading vocab")
-  filename = "c:/Users/xulei/zhiziyun/autoTitle/Data/vocab_dic"
+  # filename = "c:/Users/xulei/zhiziyun/autoTitle/Data/vocab_dic"
   vocabulary = read_vocab(filename)
   vsize = len(vocabulary)
   global vocabulary_size
@@ -150,7 +150,7 @@ with graph.as_default(self):
 
 
 def run(self,graph, num_steps):
-  with tf.Session(graph=graph) as session:
+  with tf.Session(graph=nce_graph) as session:
     # We must initialize all variables before we use them.
     init.run()
     print('Initialized')
@@ -189,7 +189,7 @@ def run(self,graph, num_steps):
 
 
 
-with graph.as_default(self):
+with nce_graph.as_default(self):
 
   # Construct the variables for the NCE loss
   nce_weights = tf.Variable(
@@ -216,16 +216,16 @@ run(graph, num_steps)
 nce_end_time = dt.datetime.now()
 print("NCE method took {} minutes to run 100 iterations".format((nce_end_time-nce_start_time).total_seconds()))
 
-def get_embedding(vocab_file,):
+def get_embedding(self,vocab_file):
   _init_()
-  data, count, dictionary, reverse_dictionary = collect_data(vocabulary_size)
+  self.data, self.count, self.dictionary, self.reverse_dictionary = collect_data(vocab_file,self.vocabulary_size)
   self.graph = tf.Graph()
-  self.embedding = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
+  self.embedding = tf.Variable(tf.random_uniform([self.vocabulary_size, self.embedding_size], -1.0, 1.0))
   softmax_start_time = dt.datetime.now()
   run(graph, num_steps=num_steps)
   softmax_end_time = dt.datetime.now()
   print("Softmax method took {} minutes to run 100 iterations".format((softmax_end_time-softmax_start_time).total_seconds()))
-  return embedding
+  return self.embedding
 
 def _init_(self):
   self.data_index = 0
