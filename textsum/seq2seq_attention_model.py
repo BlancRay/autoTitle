@@ -21,6 +21,7 @@ import numpy as np
 import seq2seq_lib
 from six.moves import xrange
 import tensorflow as tf
+import embedding as emb
 
 HParams = namedtuple('HParams',
                      'mode, min_lr, lr, batch_size, '
@@ -147,9 +148,10 @@ class Seq2SeqAttentionModel(object):
 
       # Embedding shared by the input and outputs.
       with tf.variable_scope('embedding'), tf.device('/cpu:0'):
-        embedding = tf.get_variable(
-            'embedding', [vsize, hps.emb_dim], dtype=tf.float32,
-            initializer=tf.truncated_normal_initializer(stddev=1e-4))
+        # embedding = tf.get_variable(
+        #     'embedding', [vsize, hps.emb_dim], dtype=tf.float32,
+        #     initializer=tf.truncated_normal_initializer(stddev=1e-4))
+        embedding = emb.get_embedding(FLAGS.vocab_path)
         emb_encoder_inputs = [tf.nn.embedding_lookup(embedding, x)
                               for x in encoder_inputs]
         emb_decoder_inputs = [tf.nn.embedding_lookup(embedding, x)
@@ -252,7 +254,9 @@ class Seq2SeqAttentionModel(object):
       grads, global_norm = tf.clip_by_global_norm(
           tf.gradients(self._loss, tvars), hps.max_grad_norm)
     tf.summary.scalar('global_norm', global_norm)
-    optimizer = tf.train.GradientDescentOptimizer(self._lr_rate)
+    # optimizer = tf.train.GradientDescentOptimizer(self._lr_rate)
+    # #Try tf.train.AdadeltaOptimizer
+    optimizer = tf.train.AdadeltaOptimizer(self._lr_rate)
     tf.summary.scalar('learning rate', self._lr_rate)
     self._train_op = optimizer.apply_gradients(
         zip(grads, tvars), global_step=self.global_step, name='train_step')
