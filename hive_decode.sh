@@ -6,7 +6,7 @@ bazel-bin/textsum/seq2seq_attention \
 --vocab_path=data/all/vocab_dic \
 --log_root=log \
 --decode_dir=log/decode \
---beam_size=10 \
+--beam_size=2 \
 --max_decode_steps=10000 \
 --truncate_input=True \
 --decode_batches_per_ckpt=1 \

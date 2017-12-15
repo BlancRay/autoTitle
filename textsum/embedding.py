@@ -10,31 +10,11 @@ import numpy as np
 import tensorflow as tf
 
 class embeded(object):
-  def maybe_download(self,filename, url, expected_bytes):
-    """Download a file if not present, and make sure it's the right size."""
-    if not os.path.exists(filename):
-      filename, _ = urllib.request.urlretrieve(url + filename, filename)
-    statinfo = os.stat(filename)
-    if statinfo.st_size == expected_bytes:
-      print('Found and verified', filename)
-    else:
-      print(statinfo.st_size)
-      raise Exception(
-        'Failed to verify ' + filename + '. Can you get to it with a browser?')
-    return filename
-
-
   # Read the data into a list of strings.
-  def read_data(self,filename):
-    """Extract the first file enclosed in a zip file as a list of words."""
-    with zipfile.ZipFile(filename) as f:
-      data = tf.compat.as_str(f.read(f.namelist()[0])).split()
-    return data
-
-  def read_vocab(self,vocab_file):
+  def read_vocab(self):
     count = 0
     data = []
-    with open(vocab_file, 'r') as vocab_f:
+    with open(self.vocab_file, 'r') as vocab_f:
         for line in vocab_f:
           pieces = line.split()
           data.append(pieces[0])
@@ -62,15 +42,9 @@ class embeded(object):
     return data, count, dictionary, reversed_dictionary
 
 
-  def collect_data(self,filename,vsize=10000):
-    # url = 'http://mattmahoney.net/dc/'
-    # filename = maybe_download('text8.zip', url, 31344016)
-    # vocabulary = read_data(filename)
-    # print(type(vocabulary))
+  def collect_data(self,vsize=10000):
     print("Reading vocab")
-    # filename = "c:/Users/xulei/zhiziyun/autoTitle/Data/vocab_dic"
-    vocabulary = self.read_vocab(filename)
-    # vsize = len(vocabulary)
+    vocabulary = self.read_vocab()
     self.vocabulary_size = len(vocabulary)
     print(type(vocabulary))
     print(vocabulary[:7])
@@ -147,12 +121,12 @@ class embeded(object):
               log_str = '%s %s,' % (log_str, close_word)
             print(log_str)
       self.embedding = self.normalized_embeddings.eval()
-
+    session.close()
 
 
 
   def get_embedding(self):
-    self.data, self.count, self.dictionary, self.reverse_dictionary = self.collect_data(self.vocab_file,self.vocabulary_size)
+    self.data, self.count, self.dictionary, self.reverse_dictionary = self.collect_data(self.vocabulary_size)
     self.graph = tf.Graph()
     with self.graph.as_default():
 
